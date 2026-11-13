@@ -65,9 +65,14 @@ function newView() {
   view.innerHTML = `
   <h1>Check content before it is published</h1>
   <p class="sub">Paste or upload a post, advertisement, email, document or image. BrandLoom checks it against the approved guidelines, facts, terminology and palette, explains every issue and suggests a fix. You decide what changes.</p>
-  <div class="card">
-    <div class="tabs" role="tablist"><button class="on" data-t="text" role="tab">Text or document</button><button data-t="image" role="tab">Image</button></div>
-    <div id="pane"></div>
+  <div class="grid-new">
+    <div class="card">
+      <div class="tabs" role="tablist"><button class="on" data-t="text" role="tab">Text or document</button><button data-t="image" role="tab">Image</button></div>
+      <div id="pane"></div>
+    </div>
+    <aside class="card checks"><h2>What gets checked</h2>
+      <ul><li>Banned words and preferred terms</li><li>Tone, shouting and unsupported claims</li><li>Numbers and dates against approved facts</li><li>Competitor names and required wording</li><li>Text contrast, palette and image alt text</li></ul>
+      <p>Every finding quotes the rule it breaks. You decide what changes.</p></aside>
   </div>`;
   const pane = $("#pane");
   const show = t => {
@@ -79,7 +84,7 @@ function newView() {
 }
 function textForm(p) {
   p.innerHTML = `
-  <div class="row small" style="margin-bottom:10px">Try a sample:
+  <div class="row samples"><span class="muted small">Try a sample</span>
     <button class="btn sec sm" data-s="messy">Messy social post</button>
     <button class="btn sec sm" data-s="facts">Ad with wrong facts</button>
     <button class="btn sec sm" data-s="clean">Clean email</button></div>
@@ -182,7 +187,7 @@ function renderContent() {
   view.innerHTML = `
   <div class="row sp"><div><h1>${esc(c.title)}</h1>
   <p class="sub"><span class="badge ${c.status}">${STATUS[c.status]}</span> &nbsp;${esc(c.kind)}${c.channel ? " · " + esc(c.channel) : ""} · by ${esc(c.author_name)} · revision ${rev.n}</p></div>
-  <div class="row"><span><span class="sev high"></span>${count("high")} high</span><span><span class="sev medium"></span>${count("medium")} medium</span><span><span class="sev low"></span>${count("low")} low</span></div></div>
+  <div class="counts"><span class="pill"><span class="sev high"></span><b>${count("high")}</b> high</span><span class="pill"><span class="sev medium"></span><b>${count("medium")}</b> medium</span><span class="pill"><span class="sev low"></span><b>${count("low")}</b> low</span></div></div>
   <div class="grid2">
    <div>
     <div class="card"><div class="row sp"><h2>${isImg ? "Image and alt text" : "Content"}</h2>
@@ -196,11 +201,11 @@ function renderContent() {
     </div>
     <div class="card"><h2>Approval workflow</h2>
       <div class="steps"><span class="${stepIdx === 0 ? "on" : "done"}">1 Draft and fix</span><span class="${stepIdx === 1 ? "on" : stepIdx > 1 ? "done" : ""}">2 In review</span><span class="${stepIdx === 2 ? "on" : ""}">3 ${c.status === "rejected" ? "Rejected" : "Approved"}</span></div>
-      ${perms.blockers.map(b => `<div class="note">⚠ ${esc(b)}</div>`).join("")}${perms.warnings.map(b => `<div class="note">ℹ ${esc(b)}. You can still submit.</div>`).join("")}
+      ${perms.blockers.map(b => `<div class="note warn">${esc(b)}</div>`).join("")}${perms.warnings.map(b => `<div class="note">${esc(b)}. You can still submit.</div>`).join("")}
       ${perms.requires_reviewer ? `<div class="note">This content has claim or fact findings, so it needs a <b>Compliance Reviewer</b> to approve.</div>` : ""}
       ${["draft", "changes_requested"].includes(c.status) ? `<button class="btn" id="submit" ${perms.can_submit ? "" : "disabled"}>Submit for approval</button>` : ""}
       ${c.status === "in_review" ? overrides(findings) + decisionBox(perms) : ""}
-      ${c.status === "approved" ? `<p class="small">✔ Approved by a person. Nothing is published automatically.</p>` : ""}
+      ${c.status === "approved" ? `<p class="note ok">Approved by a person. Nothing is published automatically.</p>` : ""}
     </div>
     <div class="card"><h2>Comments</h2>
       ${comments.map(m => `<div class="comment"><b>${esc(m.author)}</b> <span class="muted small">${esc(m.created_at)}</span><br>${esc(m.body)}</div>`).join("") || '<p class="muted small">No comments yet.</p>'}
@@ -209,7 +214,7 @@ function renderContent() {
       ${revisions.slice().reverse().map((r, i, arr) => { const prev = arr[i + 1]; return `<details><summary>Revision ${r.n} · ${esc(r.author)} · ${esc(r.note)} <span class="muted small">${esc(r.created_at)}</span></summary>${prev ? `<div class="diffbox">${wordDiff(prev.body, r.body)}</div>` : `<div class="diffbox">${esc(r.body)}</div>`}</details>`; }).join("")}
       <details><summary>Audit log (${audit.length})</summary>${audit.map(a => `<div class="small"><span class="muted">${esc(a.created_at)}</span> · <b>${esc(a.actor)}</b> · ${esc(a.action.replace(/_/g, " "))} ${a.detail ? "· " + esc(a.detail) : ""}</div>`).join("")}</details></div>
    </div>
-   <div>
+   <div class="findcol">
     <div class="row sp"><h2>Findings (${open.length} open)</h2><label class="small"><input type="checkbox" id="showres" ${SHOW_RESOLVED ? "checked" : ""}> show resolved</label></div>
     ${shown.map(findingCard).join("") || `<div class="card"><b>No open findings.</b><p class="muted small">Everything checked against the approved library passes. A person still has to approve.</p></div>`}
    </div>
