@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BrandLoom: pre-publication brand review</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#view">Skip to content</a>
+<header class="top">
+  <div class="brand"><span class="logo" aria-hidden="true">◐</span> BrandLoom <small>demo brand: Lumora (fictional)</small></div>
+  <nav aria-label="Main">
+    <a href="#/new" data-nav="new">Check content</a>
+    <a href="#/queue" data-nav="queue">Queue</a>
+    <a href="#/library" data-nav="library">Brand library</a>
+    <a href="#/insights" data-nav="insights">Insights</a>
+    <a href="#/about" data-nav="about">AI &amp; privacy</a>
+  </nav>
+  <label class="who">Signed in as
+    <select id="user" aria-label="Choose demo user"></select>
+  </label>
+</header>
+<div class="aibar" role="note">Findings come from your approved library using rules. No AI model reads your content in this version and nothing leaves this server. People make every approval decision.</div>
+<main id="view" tabindex="-1" aria-live="polite"></main>
+<div id="toast" role="status" aria-live="assertive"></div>
+<script src="app.js"></script>
+</body>
+</html>
